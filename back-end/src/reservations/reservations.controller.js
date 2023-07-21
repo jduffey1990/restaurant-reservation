@@ -45,8 +45,13 @@ function dateIsNotTuesday(req, res, next) {
 }
 
 function isDuringOpenHours(req, res, next) {
-  const { hour, mins } = res.locals;
-  if ((hour >= 21 && mins >= 30) || (hour <= 10 && mins <= 30)) {
+  const { reservation_date, reservation_time } = req.body.data;
+  const reservationDateTime = new Date(`${reservation_date}T${reservation_time}Z`); // Z ensures UTC time
+  const reservationHour = reservationDateTime.getUTCHours();
+  const reservationMins = reservationDateTime.getUTCMinutes();
+
+  if ((reservationHour < 10) || (reservationHour === 10 && reservationMins < 30) ||
+    (reservationHour > 21) || (reservationHour === 21 && reservationMins > 30)) {
     return next({
       status: 400,
       message: "Reservation is not during operating hours",
@@ -54,6 +59,7 @@ function isDuringOpenHours(req, res, next) {
   }
   next();
 }
+
 
 async function create(req, res, _next) {
   res.status(201).json({ data: await service.create(req.body.data) });

@@ -128,7 +128,7 @@ async function create(req, res, _next) {
 }
 
 async function list(_req, res, _next) {
-    res.json({ data: await service.list() });
+    res.status(201).json({ data: await service.list() });
 }
 
 async function seat(_req, res, _next) {
@@ -136,12 +136,12 @@ async function seat(_req, res, _next) {
         res.locals.table.table_id,
         res.locals.reservation_id
     );
-    res.json({ data });
+    res.status(201).json({ data });
 }
 
 async function finish(_req, res, _next) {
     const data = await service.finish(res.locals.table);
-    res.json({ data });
+    res.status(201).json({ data });
 }
 
 module.exports = {

@@ -15,18 +15,17 @@ function NewTable() {
     const [error, setError] = useState(null)
 
     const handleChange = ({ target: { name, value } }) => {
-        let newValue = value;
         if (name === 'capacity') {
             setTable({
                 ...table,
                 [name]: Number(value),
-              });
-            }
-        setTable({
-            ...table,
-            [name]: newValue,
-        })
-        return
+            });
+        } else {
+            setTable({
+                ...table,
+                [name]: value,
+            })
+        }
     }
 
     function handleSubmit(event) {
