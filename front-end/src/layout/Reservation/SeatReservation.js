@@ -6,10 +6,14 @@ import { listTables, seatReservation, readReservation } from "../../utils/api";
 function SeatReservation(onSubmit) {
   const history = useHistory();
   const { reservation_id } = useParams();
+  const [reservation, setReservation] = useState({});
   const [tables, setTables] = useState([]);
   const [tableId, setTableId] = useState("");
   const [tableErrors, setTableErrors] = useState(null);
 
+  useEffect(() => {
+    readReservation(reservation_id).then(setReservation);
+  }, [reservation_id]);
 
   useEffect(() => {
     loadTables();

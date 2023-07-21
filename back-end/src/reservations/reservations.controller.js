@@ -94,7 +94,7 @@ function validatePhoneNumber(req, res, next) {
     console.log("Invalid phone number entered");
     return next({ status: 400, message: 'Invalid phone number. Phone number must contain exactly 7 or 10 digits' });
   }
-  res.locals.mobile_number = cleanNumber;
+  res.locals.mobile_number = cleanNumber; // Modified this line
   next();
 }
 
@@ -116,7 +116,7 @@ async function status(req, res) {
 }
 
 async function search(req, res, next) {
-  const mobile_number = res.locals.mobile_number;
+  const mobile_number = res.locals.mobile_number; // Modified this line
   const data = await service.search(mobile_number);
   res.json({ data });
 }

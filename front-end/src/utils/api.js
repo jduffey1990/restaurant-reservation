@@ -96,6 +96,12 @@ export async function readReservation(reservation_id, signal) {
 export async function readPhone(mobile_number, signal) {
   const url = new URL(`${API_BASE_URL}/reservations/search`);
   url.searchParams.append('mobile_number', mobile_number);
+  const options = {
+    method: "GET",
+    mode: "cors",
+    headers,
+    signal,
+  };
   return await fetchJson(url, { headers, signal }, [])
     .then(formatReservationDate)
     .then(formatReservationTime);
