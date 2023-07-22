@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import ErrorAlert from "../layout/ErrorAlert";
-import { readPhone } from "../utils/api";
+import { listReservations } from "../utils/api";
 import Reservation from "../layout/Reservation/Reservation";
 
-function Search( onCancel = () => { }) {
+function Search(onCancel = () => { }) {
     const [reservations, setReservations] = useState([]);
-    const [mobileNumber, setMobileNumber] = useState("");
+    const [mobile_number, setMobileNumber] = useState("");
     const [error, setError] = useState(null);
 
     function handleChange({ target: { value } }) {
@@ -14,16 +14,22 @@ function Search( onCancel = () => { }) {
 
     function handleSubmit(event) {
         event.preventDefault();
-        loadReservations();
-    }
+        if (mobile_number === "") {
+            setError(new Error("Please enter a mobile number before searching."));
+            return;
+        }
+        const abortController = new AbortController();
 
-    function loadReservations() {
-        readPhone(mobileNumber)
+        listReservations({ mobile_number }, abortController.signal)
             .then(reservations => {
-                setReservations(reservations);
-                setError(null); // Clear the error
+                if (reservations.length === 0) {
+                    setError(new Error("There is no record of that phone number."));
+                } else {
+                    setReservations(reservations);
+                    setError(null); // Clear the error
+                }
             })
-            .catch(error => setError(error));
+            .catch(error => setError(new Error(error.message)));
     }
 
     return (
@@ -38,7 +44,7 @@ function Search( onCancel = () => { }) {
                         name="mobile_number"
                         className="form-control"
                         onChange={handleChange}
-                        value={mobileNumber}
+                        value={mobile_number}
                         placeholder="mobile number"
                     />
                 </label>

@@ -1,11 +1,6 @@
 const router = require("express").Router();
+const methodNotAllowed = require("../errors/methodNotAllowed");
 const controller = require("./reservations.controller");
-const methodNotAllowed = require("../errors/methodNotAllowed")
-
-
-router.route("/search")
-    .get(controller.search)
-    .all(methodNotAllowed);
 
 router.route("/:reservation_id/status")
     .put(controller.status)
@@ -19,8 +14,6 @@ router.route("/:reservation_id")
 router.route("/")
     .get(controller.list)
     .post(controller.create)
-    .all(methodNotAllowed);
-
-
+    .all(methodNotAllowed)
 
 module.exports = router;
