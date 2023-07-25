@@ -138,19 +138,13 @@ function ReservationForm() {
         </div>
         <div >
           <label htmlFor="people">People</label>
-          <select id="people" name="people" onChange={handleChange} value={reservation.people} required>
-            <option> 1 </option>
-            <option> 2 </option>
-            <option> 3 </option>
-            <option> 4 </option>
-            <option> 5 </option>
-            <option> 6 </option>
-            <option> 7 </option>
-            <option> 8 </option>
-            <option> 9 </option>
-            <option> 10 </option>
-          </select>
-
+          <input
+            id="people"
+            name="people"
+            onChange={handleChange}
+            value={reservation.people}
+            required
+          />
         </div>
         <button
           type="button"

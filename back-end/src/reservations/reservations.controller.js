@@ -78,7 +78,7 @@ function peopleIsValid(req, _res, next) {
   if (!people || !Number.isInteger(people) || people <= 0) {
     return next({
       status: 400,
-      message: `Check people`,
+      message: `Party number entry invalid`,
     });
   }
   next();
