@@ -44,13 +44,12 @@ function ReservationForm() {
         ...reservation,
         [name]: Number(value),
       });
-
+    } else {
+      setReservation({
+        ...reservation,
+        [name]: value,
+      });
     }
-    setReservation({
-      ...reservation,
-      [name]: value,
-    });
-    return
   };
 
 
