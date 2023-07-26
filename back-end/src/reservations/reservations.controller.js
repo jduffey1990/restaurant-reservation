@@ -159,15 +159,16 @@ function isNotFinished(_req, res, next) {
 
 // list reservations
 async function list(req, res, _next) {
-  // list reservations only on the date passed in the query
   const { date } = req.query;
   if (date) {
     return res.json({ data: await service.listOnDate(date) });
   }
   const { mobile_number } = req.query;
-  if (mobile_number) {
+  if (mobile_number && !isNaN(mobile_number)) {
     return res.json({ data: await service.listForNumber(mobile_number) });
   }
+  // return error message when mobile_number is not a number
+  return res.json({ error: "Invalid phone number" });
 }
 
 async function create(req, res, next) {
