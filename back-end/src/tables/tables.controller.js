@@ -124,11 +124,11 @@ function isReservationSeated(req, res, next) {
 }
 
 async function create(req, res, _next) {
-    res.status(201).json({ data: await service.create(req.body.data) });
+    res.status(200).json({ data: await service.create(req.body.data) });
 }
 
 async function list(_req, res, _next) {
-    res.status(201).json({ data: await service.list() });
+    res.status(200).json({ data: await service.list() });
 }
 
 async function seat(_req, res, _next) {
@@ -136,12 +136,12 @@ async function seat(_req, res, _next) {
         res.locals.table.table_id,
         res.locals.reservation_id
     );
-    res.status(201).json({ data });
+    res.status(200).json({ data });
 }
 
 async function finish(_req, res, _next) {
     const data = await service.finish(res.locals.table);
-    res.status(201).json({ data });
+    res.status(200).json({ data });
 }
 
 module.exports = {

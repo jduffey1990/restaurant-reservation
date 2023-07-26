@@ -47,8 +47,5 @@
   },
   "keywords": [],
   "author": "Thinkful, Inc.",
-  "license": "UNLICENSED",
-  "dependencies": {
-    "webpack": "^5.88.1"
-  }
+  "license": "UNLICENSED"
 }
