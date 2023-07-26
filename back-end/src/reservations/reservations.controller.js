@@ -168,9 +168,6 @@ async function list(req, res, _next) {
   if (mobile_number) {
     return res.json({ data: await service.listForNumber(mobile_number) });
   }
-  // list all reservations (no date given)
-  data = await service.list();
-  return res.json({ data });
 }
 
 async function create(req, res, next) {
