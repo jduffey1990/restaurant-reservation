@@ -124,7 +124,7 @@ function isReservationSeated(req, res, next) {
 }
 
 async function create(req, res, _next) {
-    res.status(200).json({ data: await service.create(req.body.data) });
+    res.status(201).json({ data: await service.create(req.body.data) });
 }
 
 async function list(_req, res, _next) {

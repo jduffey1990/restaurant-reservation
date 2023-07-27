@@ -16,11 +16,11 @@ function nameIsValid(req, _res, next) {
   const { first_name, last_name } = req.body.data;
   const error = { status: 400 };
   if (!first_name || !first_name.length) {
-    error.message = `First Name Required`;
+    error.message = `first_name`;
     return next(error);
   }
   if (!last_name || !last_name.length) {
-    error.message = `Last Name Required`;
+    error.message = `last_name`;
     return next(error);
   }
 
@@ -33,7 +33,7 @@ function mobileNumberIsValid(req, _res, next) {
   if (!mobile_number)
     return next({
       status: 400,
-      message: "Please enter phone number",
+      message: "mobile_number",
     });
   next();
 }
@@ -44,7 +44,7 @@ function dateIsValid(req, _res, next) {
   if (!reservation_date || new Date(reservation_date) == "Invalid Date")
     return next({
       status: 400,
-      message: "reservation date",
+      message: "reservation_date",
     });
   next();
 }
@@ -55,7 +55,7 @@ function timeIsValid(req, res, next) {
 
   const error = {
     status: 400,
-    message: "check time",
+    message: "reservation_time",
   };
   if (!reservation_time) return next(error);
   if (reservation_time[2] === ":") {
@@ -78,7 +78,7 @@ function peopleIsValid(req, _res, next) {
   if (!people || !Number.isInteger(people) || people <= 0) {
     return next({
       status: 400,
-      message: `Party number entry invalid`,
+      message: `people`,
     });
   }
   next();
@@ -159,16 +159,16 @@ function isNotFinished(_req, res, next) {
 
 // list reservations
 async function list(req, res, _next) {
-  const { date } = req.query;
+  const { date, mobile_number } = req.query;
+  let data;
   if (date) {
-    return res.json({ data: await service.listOnDate(date) });
+    data = await service.listOnDate(date);
+  } else if (mobile_number) {
+    data = await service.listForNumber(mobile_number);
+  } else {
+    data = await service.list();
   }
-  const { mobile_number } = req.query;
-  if (mobile_number && !isNaN(mobile_number)) {
-    return res.json({ data: await service.listForNumber(mobile_number) });
-  }
-  // return error message when mobile_number is not a number
-  return res.json({ error: "Invalid phone number" });
+  res.status(200).json({ data });
 }
 
 async function create(req, res, next) {
