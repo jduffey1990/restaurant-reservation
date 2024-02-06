@@ -1,6 +1,8 @@
 
 # **Restaurant Reservation App**
 ### Restaurant Reservation is made for a ficticious restaurant named "Periodic Tables" to manage their tables and reservations.
+### Render spins down the back end after 15 minutes of the app not being used for these freee instances.  If you use the search function it should jog the back end and spin up after a brief period.
+![Screenshot 2023-10-17 093955](https://github.com/jduffey1990/restaurant-reservation/assets/122471477/bd80f67b-34d1-49a6-8ea8-8a6b3e300557)
 
 
 ## **Links**
