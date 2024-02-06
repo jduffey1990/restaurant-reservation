@@ -46,64 +46,51 @@ function Dashboard({ date }) {
 
 
   return (
-    <main>
-      <h1>Dashboard</h1>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for date</h4>
-      </div>
+    <main className="container mt-3">
+      <h1 className="mb-4 text-center">Dashboard</h1>
       <ErrorAlert error={reservationsError} />
-      <button
-        type="button"
-        onClick={() => {
-          setReservationDate(previous(reservationDate))
-        }}
-        className="btn btn-secondary"
-      > Yesterday
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          setReservationDate(today(reservationDate))
-        }}
-        className="btn btn-secondary m-2"
-      > Today
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          setReservationDate(next(reservationDate))
-        }}
-        className="btn btn-secondary"
-      > Tomorrow
-      </button>
-      <h2>Patrons</h2>
-      <div>
-        {reservations.length > 0 ?
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Patron</th>
-                  <th>Phone #</th>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Size</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {reservations.map((reservation) => (
-                  <Reservation onCancel={onCancel} reservation={reservation} key={reservation.reservation_id} />
-                ))}
-              </tbody>
-            </table>
-          </div> :
-          <p> There are currently no reservations for {reservationDate}</p>}
+      <div className="row mb-3">
+          <div className="col">
+            <h4>Reservations for {reservationDate}</h4>
+            <div className="btn-group" role="group">
+              <button type="button" onClick={() => setReservationDate(previous(reservationDate))} className="btn btn-outline-primary">Yesterday</button>
+              <button type="button" onClick={() => setReservationDate(today(reservationDate))} className="btn btn-outline-primary mx-2">Today</button>
+              <button type="button" onClick={() => setReservationDate(next(reservationDate))} className="btn btn-outline-primary">Tomorrow</button>
+            </div>
+          </div>
       </div>
 
-      <div>
+      <div className="row">
+        <div className="col-lg-12 mb-3">
+          <h2>Patrons</h2>
+          {reservations.length > 0 ? (
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Patron</th>
+                    <th>Phone #</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Size</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {reservations.map((reservation) => (
+                    <Reservation onCancel={onCancel} reservation={reservation} key={reservation.reservation_id} />
+                  ))}
+                </tbody>
+              </table>
+              </div>
+            ) : (
+              <p>No reservations for {reservationDate}</p>
+            )}
+          </div>
+        </div>
+
+      <div className="col-lg-12 mb-3">
         <h2>Tables</h2>
         <div>
           {tables.length > 0 ?
@@ -111,7 +98,6 @@ function Dashboard({ date }) {
               <table className="table">
                 <thead>
                   <tr>
-                    <th>ID</th>
                     <th>Table</th>
                     <th>Capacity</th>
                     <th>Status</th>
@@ -125,7 +111,7 @@ function Dashboard({ date }) {
                 </tbody>
               </table>
             </div> :
-            <p> There are currently no tables in the restaurant</p>}
+            <p> No tables in the restaurant</p>}
         </div>
       </div>
     </main>

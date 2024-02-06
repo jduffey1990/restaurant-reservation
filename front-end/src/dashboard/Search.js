@@ -33,49 +33,51 @@ function Search(onCancel = () => { }) {
     }
 
     return (
-        <main>
-            <h3>Search for reservation by phone number</h3>
-            <ErrorAlert error={error} />
-            <form onSubmit={handleSubmit}>
-                <label>
-                    <input
-                        type="text"
-                        id="mobile_number"
-                        name="mobile_number"
-                        className="form-control"
-                        onChange={handleChange}
-                        value={mobile_number}
-                        placeholder="mobile number"
-                    />
-                </label>
-                <button type="submit">Find</button>
-            </form>
-            <div>
-                {reservations.length > 0 ?
-                    <div className="table-responsive">
-                        <table className="table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Patron</th>
-                                    <th>Phone #</th>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                    <th>Size</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {reservations.map((reservation) => (
-                                    <Reservation onCancel={onCancel} reservation={reservation} key={reservation.reservation_id} />
-                                ))}
-                            </tbody>
-                        </table>
-                    </div> :
-                    <p> No reservation found </p>}
+        <main className="container">
+        <h3>Search for Reservation by Phone Number</h3>
+        <ErrorAlert error={error} />
+        <form onSubmit={handleSubmit} className="col-lg-6 mb-3">
+          <div className="form-group">
+            <input
+              type="text"
+              id="mobile_number"
+              name="mobile_number"
+              className="form-control"
+              onChange={handleChange}
+              value={mobile_number}
+              placeholder="Mobile number"
+            />
+          </div>
+          <button type="submit" className="btn btn-primary">Find</button>
+        </form>
+        <div>
+          {reservations.length > 0 ? (
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Patron</th>
+                    <th>Phone #</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Size</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {reservations.map((reservation) => (
+                    <Reservation onCancel={onCancel} reservation={reservation} key={reservation.reservation_id} />
+                  ))}
+                </tbody>
+              </table>
             </div>
-        </main>
+          ) : (
+            <p>No reservation found</p>
+          )}
+        </div>
+      </main>
     );
 }
 

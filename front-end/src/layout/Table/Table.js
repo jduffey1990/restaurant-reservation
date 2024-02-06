@@ -17,7 +17,6 @@ function Table({ onFinish, table }) {
 
   return (
     <tr>
-      <td>{table.table_id}</td>
       <td>{table.table_name}</td>
       <td>{table.capacity}</td>
       <td className={`col-sm-1 ${table.reservation_id ? 'text-danger' : 'text-success'}`}

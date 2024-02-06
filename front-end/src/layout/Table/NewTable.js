@@ -42,44 +42,52 @@ function NewTable() {
     }
 
     return (
-        <main>
-            <h1>Create Table</h1>
-            <ErrorAlert error={error} />
-            <form name="table-form" onSubmit={handleSubmit}>
-                <div className="form-group d-md-flex mb-3">
-                    <label htmlFor="table-name">Name</label>
-                    <input
-                        id="table-name"
-                        name="table_name"
-                        type="text"
-                        onChange={handleChange}
-                        value={table.table_name}
-                        required
-                    />
-                </div>
-                <div className="form-group d-md-flex mb-3">
-                    <label htmlFor="table-capacity">Capacity</label>
-                    <input
-                        id="table-capacity"
-                        name="capacity"
-                        type="number"
-                        onChange={handleChange}
-                        value={table.capacity}
-                        required
-                    />
-                </div>
-                <button
-                    type="button"
-                    className="btn btn-secondary mr-2"
-                    onClick={() => history.goBack()}
-                >
-                    Cancel
-                </button>
-                <button type="submit" className="btn btn-primary">
-                    Submit
-                </button>
-            </form>
-        </main>
+        <main className="container">
+        <h1>Create Table</h1>
+        <ErrorAlert error={error} />
+        <form name="table-form" className="col-lg-6 mb-3" onSubmit={handleSubmit}>
+          <div className="form-group row">
+            <label htmlFor="table-name" className="col-sm-2 col-form-label">Name</label>
+            <div className="col-sm-10">
+              <input
+                id="table-name"
+                name="table_name"
+                type="text"
+                className="form-control"
+                onChange={handleChange}
+                value={table.table_name}
+                required
+              />
+            </div>
+          </div>
+          <div className="form-group row">
+            <label htmlFor="table-capacity" className="col-sm-2 col-form-label">Capacity</label>
+            <div className="col-sm-10">
+              <input
+                id="table-capacity"
+                name="capacity"
+                type="number"
+                className="form-control"
+                onChange={handleChange}
+                value={table.capacity}
+                required
+              />
+            </div>
+          </div>
+          <div className="form-group">
+            <button
+              type="button"
+              className="btn btn-secondary mr-2"
+              onClick={() => history.goBack()}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
+          </div>
+        </form>
+      </main>
     );
 }
 

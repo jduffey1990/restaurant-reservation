@@ -1,4 +1,36 @@
 .side-bar {
   background-color: #393a44;
   min-width: 200px;
+  min-height: 100vh;
+}
+
+h1, h2, h4 {
+  color: #393a44; /* Adjust the color as per your scheme */
+}
+
+.table th {
+  background-color: #f8f9fa;
+}
+
+.btn-outline-primary {
+  color: #393a44;
+  border-color: #393a44;
+}
+
+.btn-outline-primary:hover {
+  background-color: #393a44;
+  color: white;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-control {
+  box-shadow: none; /* if you want to remove the default Bootstrap shadow */
+}
+
+/* Custom styles for buttons */
+.btn-primary, .btn-secondary {
+  margin-right: 0.5rem;
 }
