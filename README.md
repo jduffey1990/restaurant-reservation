@@ -58,3 +58,9 @@ As a growing restaurant, I wanted to give functionality to the manager to add ta
 - Knex
 - Node.js
 - PostgreSQL
+
+## **Hosting**
+### **DB:**
+- Tembo logged in with github
+### **Site Servin:**
+- Render logged in with git hub
