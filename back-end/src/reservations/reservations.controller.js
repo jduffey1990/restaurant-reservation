@@ -51,26 +51,17 @@ function dateIsValid(req, _res, next) {
 
 // Validate that reservation time exists and is correctly formatted
 function timeIsValid(req, res, next) {
-  let { reservation_time } = req.body.data;
+  const { reservation_time } = req.body.data;
+  const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
-  const error = {
-    status: 400,
-    message: "reservation_time",
-  };
-  if (!reservation_time) return next(error);
-  if (reservation_time[2] === ":") {
-    // remove colon
-    reservation_time = reservation_time.replace(":", "");
-    // remove only store hours minutes
-    reservation_time = reservation_time.substring(0, 4);
+  if (!reservation_time || !timeRegex.test(reservation_time)) {
+    return next({ status: 400, message: "reservation_time" });
   }
-  res.locals.hour = reservation_time.substring(0, 2)
-  res.locals.mins = reservation_time.substring(2, 4)
-  if (Number.isInteger(Number(reservation_time))) {
-    next()
-  } else {
-    next(error);
-  }
+
+  const [hour, mins] = reservation_time.split(":").map(Number);
+  res.locals.hour = hour;
+  res.locals.mins = mins;
+  next();
 }
 
 function peopleIsValid(req, _res, next) {
@@ -122,11 +113,12 @@ function dateIsNotTuesday(req, _res, next) {
 
 function isDuringOpenHours(_req, res, next) {
   const { hour, mins } = res.locals;
-  if (hour >= 22 || (hour <= 10 && mins <= 30)) {
-    return next({
-      status: 400,
-      message: "We are not open at that time",
-    });
+  const timeAsMinutes = hour * 60 + mins;
+  const openTime = 10 * 60 + 30;  // 10:30 AM
+  const closeTime = 21 * 60 + 30; // 9:30 PM (last reservation)
+
+  if (timeAsMinutes < openTime || timeAsMinutes > closeTime) {
+    return next({ status: 400, message: "We are not open at that time" });
   }
   next();
 }
