@@ -1,36 +1,546 @@
-.side-bar {
-  background-color: #393a44;
-  min-width: 200px;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700;900&display=swap');
+
+/* =========================================
+   CSS VARIABLES — WARM BISTRO PALETTE
+   ========================================= */
+:root {
+  --deep-charcoal: #1a1a1f;
+  --sidebar-bg: #12100e;
+  --sidebar-accent: #1e1b17;
+  --gold: #c9963a;
+  --gold-light: #d4a853;
+  --gold-muted: rgba(201, 150, 58, 0.15);
+  --cream: #f5f0e8;
+  --cream-muted: rgba(245, 240, 232, 0.7);
+  --body-bg: #f9f6f1;
+  --card-bg: #ffffff;
+  --border: rgba(0,0,0,0.08);
+  --border-warm: rgba(201, 150, 58, 0.2);
+  --text-dark: #1a1a1f;
+  --text-mid: #5a5650;
+  --text-muted: #9a948e;
+  --status-booked: #3a7bd5;
+  --status-booked-bg: rgba(58, 123, 213, 0.08);
+  --status-seated: #2a9d5c;
+  --status-seated-bg: rgba(42, 157, 92, 0.08);
+  --status-finished: #9a948e;
+  --status-finished-bg: rgba(154, 148, 142, 0.08);
+  --status-cancelled: #c0392b;
+  --status-cancelled-bg: rgba(192, 57, 43, 0.08);
+  --occupied-bg: rgba(192, 57, 43, 0.06);
+  --free-bg: rgba(42, 157, 92, 0.06);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.06);
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+/* =========================================
+   BASE & TYPOGRAPHY
+   ========================================= */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Lato', sans-serif;
+  font-weight: 400;
+  background: var(--body-bg);
+  color: var(--text-dark);
+  margin: 0;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Playfair Display', serif;
+  color: var(--text-dark);
+  margin-top: 0;
+}
+
+h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; font-weight: 600; }
+h4 { font-size: 1.1rem; font-weight: 600; }
+
+/* =========================================
+   LAYOUT SHELL
+   ========================================= */
+.container-fluid {
+  padding: 0;
   min-height: 100vh;
 }
 
-h1, h2, h4 {
-  color: #393a44; /* Adjust the color as per your scheme */
+.row.h-100 {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
 }
 
-.table th {
-  background-color: #f8f9fa;
+/* =========================================
+   SIDEBAR
+   ========================================= */
+.side-bar {
+  background: var(--sidebar-bg);
+  min-width: 220px;
+  max-width: 220px;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  box-shadow: 2px 0 20px rgba(0,0,0,0.3);
+  z-index: 100;
+  overflow: hidden;
 }
 
-.btn-outline-primary {
-  color: #393a44;
-  border-color: #393a44;
+.side-bar::before {
+  content: '';
+  display: block;
+  height: 3px;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
-.btn-outline-primary:hover {
-  background-color: #393a44;
-  color: white;
+.side-bar .navbar {
+  flex: 1;
+  flex-direction: column;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  flex-wrap: nowrap !important;
+  padding: 0;
+  width: 100%;
 }
 
+.side-bar .container-fluid.d-flex.flex-column {
+  flex: 1;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  padding: 0 !important;
+  width: 100%;
+  gap: 0;
+}
+
+.nav.navbar-nav {
+  padding: 0.5rem 0;
+  list-style: none;
+  margin: 0;
+  display: flex !important;
+  flex-direction: column;
+  width: 100%;
+  gap: 0;
+}
+
+.nav-item {
+  margin: 1px 0.6rem;
+  width: auto;
+}
+
+/* =========================================
+   MAIN CONTENT AREA
+   ========================================= */
+.col {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  background: var(--body-bg);
+}
+
+main.container,
+main.container-fluid {
+  padding: 2rem 2.5rem;
+  max-width: 1100px;
+}
+
+/* =========================================
+   DASHBOARD
+   ========================================= */
+.dashboard-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border-warm);
+}
+
+/* Date navigation buttons */
+.btn-group .btn-outline-primary {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold) !important;
+  border-color: var(--border-warm) !important;
+  background: transparent !important;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-sm) !important;
+  transition: all 0.15s ease;
+}
+
+.btn-group .btn-outline-primary:hover,
+.btn-group .btn-outline-primary:focus {
+  background: var(--gold-muted) !important;
+  border-color: var(--gold) !important;
+  color: var(--gold) !important;
+  box-shadow: none !important;
+}
+
+/* =========================================
+   SECTION HEADINGS
+   ========================================= */
+h2.section-heading, .section-heading {
+  font-size: 0.7rem;
+  font-family: 'Lato', sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+/* Override h2 color globally used as section headers */
+.row h2 {
+  font-size: 0.7rem;
+  font-family: 'Lato', sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+/* =========================================
+   RESERVATION CARDS
+   ========================================= */
+/* Wrap the table in card styles via the tr */
+.table {
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  width: 100%;
+}
+
+.table thead th {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: transparent !important;
+  border: none !important;
+  padding: 0.4rem 0.75rem;
+}
+
+.table tbody tr {
+  background: var(--card-bg);
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.table tbody tr:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.table tbody td {
+  border: none !important;
+  padding: 0.85rem 0.75rem;
+  font-size: 0.88rem;
+  color: var(--text-dark);
+  vertical-align: middle;
+}
+
+.table tbody td:first-child {
+  border-radius: var(--radius) 0 0 var(--radius);
+  padding-left: 1rem;
+}
+
+.table tbody td:last-child {
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding-right: 1rem;
+}
+
+/* =========================================
+   STATUS BADGES
+   ========================================= */
+[data-reservation-id-status],
+.reservation-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+}
+
+[data-reservation-id-status="booked"],
+.status-booked {
+  color: var(--status-booked);
+  background: var(--status-booked-bg);
+}
+
+[data-reservation-id-status="seated"],
+.status-seated {
+  color: var(--status-seated);
+  background: var(--status-seated-bg);
+}
+
+[data-reservation-id-status="finished"],
+.status-finished {
+  color: var(--status-finished);
+  background: var(--status-finished-bg);
+}
+
+[data-reservation-id-status="cancelled"],
+.status-cancelled {
+  color: var(--status-cancelled);
+  background: var(--status-cancelled-bg);
+}
+
+/* Table status */
+[data-table-id-status="Free"],
+[data-table-id-status="free"] {
+  color: var(--status-seated);
+  background: var(--free-bg);
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+}
+
+[data-table-id-status="Occupied"],
+[data-table-id-status="occupied"] {
+  color: var(--status-cancelled);
+  background: var(--occupied-bg);
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+}
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+.btn {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 1rem;
+  transition: all 0.15s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--gold) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(201, 150, 58, 0.3) !important;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background: var(--gold-light) !important;
+  box-shadow: 0 4px 12px rgba(201, 150, 58, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: transparent !important;
+  color: var(--text-mid) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.btn-secondary:hover {
+  background: rgba(0,0,0,0.04) !important;
+  color: var(--text-dark) !important;
+}
+
+.btn-danger {
+  background: transparent !important;
+  color: var(--status-cancelled) !important;
+  border: 1px solid rgba(192,57,43,0.2) !important;
+}
+
+.btn-danger:hover {
+  background: rgba(192,57,43,0.06) !important;
+}
+
+/* Seat button */
+.btn-sm {
+  font-size: 0.7rem;
+  padding: 0.3rem 0.7rem;
+}
+
+/* =========================================
+   FORMS
+   ========================================= */
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
 }
 
 .form-control {
-  box-shadow: none; /* if you want to remove the default Bootstrap shadow */
+  font-family: 'Lato', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.85rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: none !important;
+  width: 100%;
 }
 
-/* Custom styles for buttons */
-.btn-primary, .btn-secondary {
-  margin-right: 0.5rem;
+.form-control:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 150, 58, 0.12) !important;
+  outline: none;
+}
+
+select.form-control {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239a948e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2rem;
+}
+
+/* =========================================
+   CARDS (form pages, etc.)
+   ========================================= */
+main.container h2:first-of-type {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: -0.01em;
+  margin-bottom: 1.5rem;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* =========================================
+   ALERTS & ERRORS
+   ========================================= */
+.alert {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.85rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  padding: 0.75rem 1rem;
+}
+
+.alert-danger {
+  background: rgba(192, 57, 43, 0.08);
+  color: var(--status-cancelled);
+  border-left: 3px solid var(--status-cancelled);
+}
+
+/* =========================================
+   EMPTY STATE
+   ========================================= */
+.no-reservations {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--text-muted);
+  font-style: italic;
+  font-family: 'Playfair Display', serif;
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 768px) {
+  .side-bar {
+    min-width: 0;
+    max-width: none;
+    height: auto;
+    min-height: auto;
+    position: relative;
+    flex-direction: row;
+  }
+
+  main.container {
+    padding: 1.25rem 1rem;
+  }
+}
+
+/* =========================================
+   MISC BOOTSTRAP OVERRIDES
+   ========================================= */
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(245, 240, 232, 0.55) !important;
+}
+
+.table-responsive {
+  border-radius: var(--radius);
+  overflow: visible;
+}
+
+hr.sidebar-divider {
+  border-color: rgba(255,255,255,0.06);
+}
+
+/* Remove Bootstrap's default table striping */
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--card-bg);
+}
+
+/* Seat select dropdown */
+select#table_id {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 2rem 0.6rem 0.85rem;
+  transition: border-color 0.15s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239a948e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+}
+
+select#table_id:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 150, 58, 0.12);
+  outline: none;
+}
+
+/* Page fade-in */
+.col > * {
+  animation: pageFadeIn 0.3s ease;
+}
+
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }

@@ -1,27 +1,42 @@
-import React, {useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Switch } from "react-router-dom";
 import Layout from "./layout/Layout";
-
+import WakeUpScreen from "./layout/WakeUpScreen";
 import { pingBackend } from "./utils/api";
 
-/**
- * Defines the root application component.
- * @returns {JSX.Element}
- */
 function App() {
+  const [isAwake, setIsAwake] = useState(false);
+
   useEffect(() => {
-    // Call the function to ping the backend
     pingBackend()
-      .then(() => console.log("Backend pinged successfully"))
-      .catch((error) => console.error("Error pinging backend:", error));
+      .then(() => {
+        // Signal the WakeUpScreen that the backend is ready
+        if (window.__wakeUpReady) {
+          window.__wakeUpReady();
+        } else {
+          setIsAwake(true);
+        }
+      })
+      .catch((error) => {
+        console.error("Error pinging backend:", error);
+        // Still proceed even if ping fails
+        if (window.__wakeUpReady) {
+          window.__wakeUpReady();
+        } else {
+          setIsAwake(true);
+        }
+      });
   }, []);
 
   return (
-    <Switch>
-      <Route path="/">
-        <Layout />
-      </Route>
-    </Switch>
+    <>
+      {!isAwake && <WakeUpScreen onReady={() => setIsAwake(true)} />}
+      <Switch>
+        <Route path="/">
+          <Layout />
+        </Route>
+      </Switch>
+    </>
   );
 }
 
