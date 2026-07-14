@@ -1,4 +1,6 @@
 const knex = require("../db/connection");
+const guestsService = require("../guests/guests.service");
+const notificationsService = require("../notifications/notifications.service");
 
 const tableName = "reservations";
 
@@ -23,11 +25,32 @@ function listForNumber(mobile_number) {
     .orderBy("reservation_date");
 }
 
-function create(reservation) {
-  return knex(tableName)
-    .insert(reservation)
-    .returning("*")
-    .then((createdRecords) => createdRecords[0]);
+// Creating a reservation also maintains the guest record for the phone
+// number and drops a confirmation into the simulated notifications outbox,
+// all in one transaction.
+function create(reservation, restaurant_id = 1) {
+  return knex.transaction(async (trx) => {
+    const guest = await guestsService.upsertByMobile(trx, {
+      restaurant_id,
+      mobile_number: reservation.mobile_number,
+      first_name: reservation.first_name,
+      last_name: reservation.last_name,
+    });
+
+    const created = await trx(tableName)
+      .insert({ ...reservation, restaurant_id, guest_id: guest.guest_id })
+      .returning("*")
+      .then((createdRecords) => createdRecords[0]);
+
+    await notificationsService.enqueue(trx, {
+      restaurant_id,
+      event_type: "booking_confirmed",
+      reservation: created,
+      guest,
+    });
+
+    return created;
+  });
 }
 
 function read(reservation_id) {

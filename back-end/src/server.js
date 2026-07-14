@@ -1,3 +1,7 @@
+const path = require("path");
+
+require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
+
 const { PORT = 8080 } = process.env;
 
 const app = require("./app");

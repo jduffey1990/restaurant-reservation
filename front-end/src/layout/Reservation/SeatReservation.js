@@ -46,6 +46,10 @@ function SeatReservation(onSubmit) {
 
   return (
     <>
+      <h1 className="m-2">
+        Seat {reservation.first_name} {reservation.last_name}
+        {reservation.people ? ` — party of ${reservation.people}` : ""}
+      </h1>
       <form onSubmit={submitHandler}>
         <select
           className="m-2"

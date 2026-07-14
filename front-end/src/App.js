@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch } from "react-router-dom";
+import Login from "./auth/Login";
+import ProtectedRoute from "./auth/ProtectedRoute";
+import BookingPage from "./public/BookingPage";
+import BookingConfirmation from "./public/BookingConfirmation";
 import Layout from "./layout/Layout";
 import WakeUpScreen from "./layout/WakeUpScreen";
 import { pingBackend } from "./utils/api";
@@ -32,8 +36,19 @@ function App() {
     <>
       {!isAwake && <WakeUpScreen onReady={() => setIsAwake(true)} />}
       <Switch>
+        <Route path="/book/confirmation/:reservation_id">
+          <BookingConfirmation />
+        </Route>
+        <Route path="/book">
+          <BookingPage />
+        </Route>
+        <Route exact path="/login">
+          <Login />
+        </Route>
         <Route path="/">
-          <Layout />
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
         </Route>
       </Switch>
     </>

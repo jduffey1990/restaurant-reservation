@@ -1,80 +1,17 @@
 const service = require("./reservations.service");
+const settingsService = require("../settings/settings.service");
+const notificationsService = require("../notifications/notifications.service");
+const knex = require("../db/connection");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
-
-// checks if body contains data
-function hasBodyData(req, _res, next) {
-  const { data } = req.body;
-  if (!data)
-    next({
-      status: 400,
-    });
-  next();
-}
-
-// Validate name exists and is not empty
-function nameIsValid(req, _res, next) {
-  const { first_name, last_name } = req.body.data;
-  const error = { status: 400 };
-  if (!first_name || !first_name.length) {
-    error.message = `first_name`;
-    return next(error);
-  }
-  if (!last_name || !last_name.length) {
-    error.message = `last_name`;
-    return next(error);
-  }
-
-  next();
-}
-
-// Validate mobile number exists
-function mobileNumberIsValid(req, _res, next) {
-  const { mobile_number } = req.body.data;
-  if (!mobile_number)
-    return next({
-      status: 400,
-      message: "mobile_number",
-    });
-  next();
-}
-
-// Validate that reservation date exists and is correctly formatted
-function dateIsValid(req, _res, next) {
-  const { reservation_date } = req.body.data;
-  if (!reservation_date || new Date(reservation_date) == "Invalid Date")
-    return next({
-      status: 400,
-      message: "reservation_date",
-    });
-  next();
-}
-
-// Validate that reservation time exists and is correctly formatted
-function timeIsValid(req, res, next) {
-  const { reservation_time } = req.body.data;
-  const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
-
-  if (!reservation_time || !timeRegex.test(reservation_time)) {
-    return next({ status: 400, message: "reservation_time" });
-  }
-
-  const [hour, mins] = reservation_time.split(":").map(Number);
-  res.locals.hour = hour;
-  res.locals.mins = mins;
-  next();
-}
-
-function peopleIsValid(req, _res, next) {
-  const { people } = req.body.data;
-  if (!people || !Number.isInteger(people) || people <= 0) {
-    return next({
-      status: 400,
-      message: `people`,
-    });
-  }
-  next();
-
-}
+const {
+  hasBodyData,
+  nameIsValid,
+  mobileNumberIsValid,
+  dateIsValid,
+  timeIsValid,
+  peopleIsValid,
+  dateIsInTheFuture,
+} = require("./reservations.validators");
 
 async function reservationExists(req, res, next) {
   const reservation = await service.read(req.params.reservation_id);
@@ -88,38 +25,56 @@ async function reservationExists(req, res, next) {
   });
 }
 
-function dateIsInTheFuture(req, _res, next) {
-  const { reservation_date, reservation_time } = req.body.data;
-  const dateTime = new Date(`${reservation_date}T${reservation_time}`);
-  if (dateTime < new Date()) {
+// "10:30:00" or "10:30" -> minutes since midnight
+function timeToMinutes(time) {
+  const [hour, mins] = time.split(":").map(Number);
+  return hour * 60 + mins;
+}
+
+// Replaces the old hardcoded closed-Tuesday / 10:30-21:30 rules with the
+// restaurant's own configured hours, party-size cap, and booking window.
+async function validateAgainstSettings(req, res, next) {
+  const { reservation_date, people } = req.body.data;
+  const restaurant_id = (req.user && req.user.restaurant_id) || 1;
+  const settings = await settingsService.getSettings(restaurant_id);
+  if (!settings) return next();
+  res.locals.settings = settings;
+
+  const weekday = new Date(reservation_date).getUTCDay();
+  const day = settings.hours.find((hour) => hour.weekday === weekday);
+  if (!day || day.is_closed) {
     return next({
       status: 400,
-      message: "Reservation must be in the future",
+      message: "Restaurant is closed on that day",
     });
   }
-  next();
-}
 
-function dateIsNotTuesday(req, _res, next) {
-  const { reservation_date } = req.body.data;
-  const day = new Date(reservation_date).getUTCDay();
-  if (day === 2)
-    return next({
-      status: 400,
-      message: "Restaurant is closed on Tuesdays",
-    });
-  next();
-}
-
-function isDuringOpenHours(_req, res, next) {
-  const { hour, mins } = res.locals;
-  const timeAsMinutes = hour * 60 + mins;
-  const openTime = 10 * 60 + 30;  // 10:30 AM
-  const closeTime = 21 * 60 + 30; // 9:30 PM (last reservation)
-
-  if (timeAsMinutes < openTime || timeAsMinutes > closeTime) {
+  const timeAsMinutes = res.locals.hour * 60 + res.locals.mins;
+  if (
+    timeAsMinutes < timeToMinutes(day.open_time) ||
+    timeAsMinutes > timeToMinutes(day.close_time)
+  ) {
     return next({ status: 400, message: "We are not open at that time" });
   }
+
+  if (people > settings.max_party_size) {
+    return next({
+      status: 400,
+      message: `people exceeds the maximum party size of ${settings.max_party_size}`,
+    });
+  }
+
+  const lastBookableDay = new Date();
+  lastBookableDay.setDate(
+    lastBookableDay.getDate() + settings.booking_window_days
+  );
+  if (new Date(`${reservation_date}T23:59:59`) > lastBookableDay) {
+    return next({
+      status: 400,
+      message: `Reservations can only be made up to ${settings.booking_window_days} days in advance`,
+    });
+  }
+
   next();
 }
 
@@ -174,7 +129,8 @@ async function create(req, res, next) {
     });
   }
   reservation.status = "booked";
-  const data = await service.create(req.body.data);
+  const restaurant_id = (req.user && req.user.restaurant_id) || 1;
+  const data = await service.create(req.body.data, restaurant_id);
   if (data) return res.status(201).json({ data });
   next({
     status: 500,
@@ -194,8 +150,17 @@ async function update(req, res, _next) {
 }
 
 async function status(req, res, _next) {
-  res.locals.reservation.status = req.body.data.status;
+  const newStatus = req.body.data.status;
+  res.locals.reservation.status = newStatus;
+  const restaurant_id = (req.user && req.user.restaurant_id) || 1;
   const data = await service.update(res.locals.reservation);
+  if (newStatus === "cancelled") {
+    await notificationsService.enqueue(knex, {
+      restaurant_id,
+      event_type: "booking_cancelled",
+      reservation: data,
+    });
+  }
   res.json({ data });
 }
 
@@ -208,8 +173,7 @@ module.exports = {
     timeIsValid,
     peopleIsValid,
     dateIsInTheFuture,
-    dateIsNotTuesday,
-    isDuringOpenHours,
+    asyncErrorBoundary(validateAgainstSettings),
     asyncErrorBoundary(create),
   ],
   list: asyncErrorBoundary(list),
@@ -222,8 +186,7 @@ module.exports = {
     timeIsValid,
     peopleIsValid,
     dateIsInTheFuture,
-    dateIsNotTuesday,
-    isDuringOpenHours,
+    asyncErrorBoundary(validateAgainstSettings),
     asyncErrorBoundary(reservationExists),
     asyncErrorBoundary(update),
   ],

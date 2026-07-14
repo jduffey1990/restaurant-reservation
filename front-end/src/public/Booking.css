@@ -1,0 +1,104 @@
+/* Diner-facing booking page — mobile-first, reuses the bistro palette
+   variables defined in Layout.css. */
+
+.booking-page {
+  min-height: 100vh;
+  background: var(--body-bg, #f9f6f1);
+  color: var(--text-dark, #1a1a1f);
+  display: flex;
+  flex-direction: column;
+}
+
+.booking-header {
+  background: var(--sidebar-bg, #12100e);
+  color: var(--cream, #f5f0e8);
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.booking-header h1 {
+  font-family: "Playfair Display", Georgia, serif;
+  color: var(--gold-light, #d4a853);
+  margin-bottom: 0.25rem;
+}
+
+.booking-header p {
+  color: var(--cream-muted, rgba(245, 240, 232, 0.7));
+  margin: 0;
+}
+
+.booking-card {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-warm, rgba(201, 150, 58, 0.2));
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  max-width: 34rem;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 1.5rem;
+}
+
+.booking-step-label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: var(--text-muted, #9a948e);
+  margin-bottom: 0.5rem;
+}
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+  gap: 0.5rem;
+}
+
+.slot-button {
+  border: 1px solid var(--border-warm, rgba(201, 150, 58, 0.2));
+  background: var(--card-bg, #fff);
+  color: var(--text-dark, #1a1a1f);
+  border-radius: 6px;
+  padding: 0.5rem 0.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.slot-button:hover,
+.slot-button:focus {
+  background: var(--gold-muted, rgba(201, 150, 58, 0.15));
+  outline: none;
+}
+
+.slot-button.selected {
+  background: var(--gold, #c9963a);
+  color: #fff;
+  border-color: var(--gold, #c9963a);
+}
+
+.booking-submit {
+  background: var(--gold, #c9963a);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  width: 100%;
+}
+
+.booking-submit:disabled {
+  opacity: 0.6;
+}
+
+.booking-footer {
+  text-align: center;
+  color: var(--text-muted, #9a948e);
+  padding: 1rem;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 480px) {
+  .booking-card {
+    margin: 1rem;
+    width: auto;
+  }
+}

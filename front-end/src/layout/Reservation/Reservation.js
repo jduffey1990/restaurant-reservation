@@ -12,12 +12,17 @@ function Reservation({ onCancel = () => { }, reservation }) {
 
     return (
         <tr>
-            <td>{reservation.last_name}, {reservation.first_name}</td>
-            <td>{reservation.mobile_number}</td>
-            <td>{reservation.reservation_date}</td>
-            <td>{reservation.reservation_time}</td>
-            <td>{reservation.people}</td>
-            <td className={
+            <td data-label="Patron" className="cell-title">
+                {reservation.last_name}, {reservation.first_name}
+                {reservation.source === "online" && (
+                    <span className="badge badge-info ml-2">online</span>
+                )}
+            </td>
+            <td data-label="Phone #">{reservation.mobile_number}</td>
+            <td data-label="Date">{reservation.reservation_date}</td>
+            <td data-label="Time">{reservation.reservation_time}</td>
+            <td data-label="Size">{reservation.people}</td>
+            <td data-label="Status" className={
                 `col-sm-1 ${reservation.status === 'booked' ? 'text-success' :
                     reservation.status === 'seated' ? 'text-warning' :
                         reservation.status === 'finished' ? 'text-primary' : ''
@@ -27,7 +32,7 @@ function Reservation({ onCancel = () => { }, reservation }) {
             >
                 {reservation.status}
             </td>
-            <td>
+            <td className="cell-actions">
                 {reservation.status === "booked" ? (
                     <div className="btn-group" role="group" aria-label="Reservation Actions">
                         <Link

@@ -1,8 +1,18 @@
 const knex = require("../db/connection");
+const checksService = require("../checks/checks.service");
 
 
 function list() {
-  return knex("tables").select("*").orderBy("table_name");
+  // open_check_id lets the dashboard link an occupied table to its check
+  return knex("tables")
+    .select("tables.*", "checks.check_id as open_check_id")
+    .leftJoin("checks", function () {
+      this.on("checks.table_id", "tables.table_id").andOnVal(
+        "checks.status",
+        "open"
+      );
+    })
+    .orderBy("table_name");
 }
 
 function create(table) {
@@ -17,10 +27,18 @@ function read(table_id) {
 
 function seat(table_id, reservation_id) {
   return knex.transaction(async (transaction) => {
-    await knex("reservations")
+    const reservation = await knex("reservations")
       .where({ reservation_id })
-      .update({ status: "seated" })
-      .transacting(transaction);
+      .update({ status: "seated" }, "*")
+      .transacting(transaction)
+      .then((records) => records[0]);
+
+    // seating a party opens their (fake POS) check
+    await checksService.openForTable(transaction, {
+      restaurant_id: (reservation && reservation.restaurant_id) || 1,
+      table_id,
+      reservation_id,
+    });
 
     return knex("tables")
       .where({ table_id })
@@ -40,6 +58,15 @@ function finish(table) {
       .where({ reservation_id: table.reservation_id })
       .update({ status: "finished" })
       .transacting(transaction);
+
+    // the legacy Finish button also settles any open check (possibly empty)
+    const openCheck = await checksService.readOpenForTable(
+      table.table_id,
+      transaction
+    );
+    if (openCheck) {
+      await checksService.closeInTransaction(transaction, openCheck);
+    }
 
     return knex("tables")
       .where({ table_id: table.table_id })

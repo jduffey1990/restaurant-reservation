@@ -10,6 +10,12 @@ import NewTable from "./Table/NewTable";
 import SeatReservation from "./Reservation/SeatReservation";
 import Search from "../dashboard/Search"
 import EditReservation from "./Reservation/EditReservation";
+import SettingsPage from "../settings/SettingsPage";
+import GuestsList from "../guests/GuestsList";
+import GuestDetail from "../guests/GuestDetail";
+import NotificationsList from "../notifications/NotificationsList";
+import MenuItemsPage from "../pos/MenuItemsPage";
+import CheckPage from "../pos/CheckPage";
 
 /**
  * Defines all the routes for the application.
@@ -44,6 +50,24 @@ function Routes() {
       </Route>
       <Route exact={true} path="/search">
         <Search />
+      </Route>
+      <Route exact={true} path="/settings">
+        <SettingsPage />
+      </Route>
+      <Route exact={true} path="/guests">
+        <GuestsList />
+      </Route>
+      <Route path="/guests/:guest_id">
+        <GuestDetail />
+      </Route>
+      <Route exact={true} path="/notifications">
+        <NotificationsList />
+      </Route>
+      <Route exact={true} path="/menu">
+        <MenuItemsPage />
+      </Route>
+      <Route path="/checks/:check_id">
+        <CheckPage />
       </Route>
       <Route path="/reservations/:reservation_id/edit">
         <EditReservation />

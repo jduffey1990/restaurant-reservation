@@ -77,8 +77,7 @@ function ReservationForm() {
 
 
   return (
-    <main className="container">
-      <h2>{reservation_id ? "Edit" : "Create"} Reservation</h2>
+    <div>
       <ErrorAlert error={error} />
       <form name="reservation-form" className="col-lg-6 mb-3" onSubmit={handleSubmit}>
         <div className="form-group">
@@ -114,7 +113,7 @@ function ReservationForm() {
           </button>
         </div>
       </form>
-    </main>
+    </div>
   );
 }
 

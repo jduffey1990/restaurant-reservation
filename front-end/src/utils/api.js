@@ -30,7 +30,7 @@ headers.append("Content-Type", "application/json");
  */
 async function fetchJson(url, options, onCancel) {
   try {
-    const response = await fetch(url, options);
+    const response = await fetch(url, { credentials: "include", ...options });
 
     if (response.status === 204) {
       return null;
@@ -56,6 +56,181 @@ async function fetchJson(url, options, onCancel) {
  * @returns {Promise<[reservation]>}
  *  a promise that resolves to a possibly empty array of reservation saved in the database.
  */
+
+export async function login(email, password, signal) {
+  const url = `${API_BASE_URL}/auth/login`;
+  const options = {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ data: { email, password } }),
+    signal,
+  };
+  return await fetchJson(url, options);
+}
+
+export async function logout(signal) {
+  const url = `${API_BASE_URL}/auth/logout`;
+  return await fetchJson(url, { method: "POST", headers, signal });
+}
+
+export async function getCurrentUser(signal) {
+  const url = `${API_BASE_URL}/auth/me`;
+  return await fetchJson(url, { headers, signal });
+}
+
+export async function getSettings(signal) {
+  const url = `${API_BASE_URL}/settings`;
+  return await fetchJson(url, { headers, signal });
+}
+
+export async function updateSettings(settings, signal) {
+  const url = `${API_BASE_URL}/settings`;
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: settings }),
+    signal,
+  };
+  return await fetchJson(url, options);
+}
+
+export async function listGuests(mobile_number, signal) {
+  const url = new URL(`${API_BASE_URL}/guests`);
+  if (mobile_number) url.searchParams.append("mobile_number", mobile_number);
+  return await fetchJson(url, { headers, signal }, []);
+}
+
+export async function readGuest(guest_id, signal) {
+  const url = `${API_BASE_URL}/guests/${guest_id}`;
+  return await fetchJson(url, { headers, signal });
+}
+
+export async function updateGuest(guest, signal) {
+  const url = `${API_BASE_URL}/guests/${guest.guest_id}`;
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: guest }),
+    signal,
+  };
+  return await fetchJson(url, options);
+}
+
+export async function listNotifications(params, signal) {
+  const url = new URL(`${API_BASE_URL}/notifications`);
+  Object.entries(params || {}).forEach(([key, value]) =>
+    url.searchParams.append(key, value.toString())
+  );
+  return await fetchJson(url, { headers, signal }, []);
+}
+
+export async function getPublicRestaurant(signal) {
+  const url = `${API_BASE_URL}/public/restaurant`;
+  return await fetchJson(url, { headers, signal });
+}
+
+export async function listAvailability(date, people, signal) {
+  const url = new URL(`${API_BASE_URL}/public/availability`);
+  url.searchParams.append("date", date);
+  url.searchParams.append("people", people);
+  return await fetchJson(url, { headers, signal }, []);
+}
+
+export async function createPublicReservation(reservation, signal) {
+  const url = `${API_BASE_URL}/public/reservations`;
+  const options = {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ data: reservation }),
+    signal,
+  };
+  return await fetchJson(url, options);
+}
+
+export async function readPublicReservation(
+  reservation_id,
+  mobile_number,
+  signal
+) {
+  const url = new URL(`${API_BASE_URL}/public/reservations/${reservation_id}`);
+  url.searchParams.append("mobile_number", mobile_number);
+  return await fetchJson(url, { headers, signal });
+}
+
+export async function cancelPublicReservation(
+  reservation_id,
+  mobile_number,
+  signal
+) {
+  const url = `${API_BASE_URL}/public/reservations/${reservation_id}/cancel`;
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: { mobile_number } }),
+    signal,
+  };
+  return await fetchJson(url, options);
+}
+
+export async function listMenuItems(includeInactive, signal) {
+  const url = new URL(`${API_BASE_URL}/menu-items`);
+  if (includeInactive) url.searchParams.append("all", "true");
+  return await fetchJson(url, { headers, signal }, []);
+}
+
+export async function createMenuItem(menuItem, signal) {
+  const url = `${API_BASE_URL}/menu-items`;
+  const options = {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ data: menuItem }),
+    signal,
+  };
+  return await fetchJson(url, options);
+}
+
+export async function updateMenuItem(menuItem, signal) {
+  const url = `${API_BASE_URL}/menu-items/${menuItem.menu_item_id}`;
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: menuItem }),
+    signal,
+  };
+  return await fetchJson(url, options);
+}
+
+export async function readCheck(check_id, signal) {
+  const url = `${API_BASE_URL}/checks/${check_id}`;
+  return await fetchJson(url, { headers, signal });
+}
+
+export async function addCheckItem(check_id, menu_item_id, quantity, signal) {
+  const url = `${API_BASE_URL}/checks/${check_id}/items`;
+  const options = {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ data: { menu_item_id, quantity } }),
+    signal,
+  };
+  return await fetchJson(url, options);
+}
+
+export async function removeCheckItem(check_id, check_item_id, signal) {
+  const url = `${API_BASE_URL}/checks/${check_id}/items/${check_item_id}`;
+  return await fetchJson(url, { method: "DELETE", headers, signal });
+}
+
+export async function closeCheck(check_id, signal) {
+  const url = `${API_BASE_URL}/checks/${check_id}/close`;
+  return await fetchJson(url, { method: "PUT", headers, signal });
+}
+
+export async function getDailyReport(date, signal) {
+  const url = new URL(`${API_BASE_URL}/reports/daily`);
+  url.searchParams.append("date", date);
+  return await fetchJson(url, { headers, signal });
+}
 
 export async function pingBackend() {
   const url = `${API_BASE_URL}/system/ping`; // Replace '/ping' with an appropriate endpoint
